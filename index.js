@@ -3,6 +3,7 @@ const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
+const bankRoll = 1000
 
 //Express Server Creation
 const app = express();
@@ -271,34 +272,89 @@ app.post("/games/delete/:id", (req, res) => {
 
 
 
-// const teamJoin = `SELECT *
-// FROM games JOIN teams t1 ON games.team1 = t1.teamID 
-// JOIN teams t2 games.team2 = t2.teamID  ;`
 
+/// Get the game and both teams
+function getGames(req, res, next) {
+  var dbRequest = 'SELECT * FROM games WHERE id = ?'
+  var param = req.params.id;
+  db.get(dbRequest,param, function(error, rows) {
+      if(rows.length !== 0) {
+          req.games = rows;
+          // console.log(req.games)
+          return next();
+          
+      }
 
-// joinCall = ()=>{
-// db.all(teamJoin, [], (err, rows) => {
-//   if (err) {
-//     throw err;
-//   }
-//   rows.forEach((row) => {
-//     console.log(row.team1SpreadOdds)
- 
-//   });
-// });
-// }
-
-// joinCall()
-
-app.get("/teams/api", (req, res) => {
-  const sql = "SELECT * FROM teams ORDER BY teamID";
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    res.send({rows});
   });
-});
+}
+
+function findTeam1(req, res, next) {
+  dbRequest = 'SELECT * FROM teams WHERE teamID = \'' + req.games.team1 + '\'';
+      db.get(dbRequest, function(error, rows) {
+          /* Add selected data to previous saved data. */
+          req.team1 = rows;
+          // console.log(req.team1)
+          next();
+      });
+  }
+
+  function findTeam2(req, res, next) {
+    dbRequest = 'SELECT * FROM teams WHERE teamID = \'' + req.games.team2 + '\'';
+        db.get(dbRequest, function(error, rows) {
+            /* Add selected data to previous saved data. */
+            req.team2 = rows;
+            // console.log(req.team2)
+            next();
+        });
+    }
+
+  function overUnder(req, res, next) {
+   
+    const team1Avg = (req.team1.ptsFor + req.team2.ptsAgainst) / 2;
+    const team2Avg = (req.team2.ptsFor + req.team1.ptsAgainst) / 2;
+    const expScore = (team1Avg + team2Avg);
+    
+      const scoreHedge = 0.20
+      let ouBet = "";
+      let betAmt = "";
+      let ouEdge =
+        (Math.round(
+          ((((expScore - req.games.ovUnd) / req.games.ovUnd) + ((1 / req.games.ovUndLine) - 0.54)) * 100
+        ))) / 100
+        console.log(ouEdge)
+    
+     const adjEdge = (ouEdge * scoreHedge)
+    
+      if (expScore >= req.games.ovUnd) {
+        ouBet = "over"
+        betAmount = adjEdge*bankRoll
+        console.log(
+          `${req.games.gameID} ${req.team1.teamID}  vs ${req.team2.teamID} Bet the over game as ${expScore} is higher than ${req.games.ovUnd}  you should bet $ ${adjEdge * bankRoll} based on current bankroll. edge = ${adjEdge}`
+        );
+        
+      } else {
+        ouBet = "under"
+        betAmount = adjEdge*bankRoll
+        console.log(
+          `${req.games.gameID} ${req.team1.teamID} vs ${req.team2.teamID} Bet the under because ${expScore} is lower than ${req.games.ovUnd} you should bet $ ${adjEdge * bankRoll} based on current bankroll. ${adjEdge}`
+        );
+      }
+      
+    req.ouResults = { 
+      expScore, 
+      ouBet,
+   betAmount,
+    adjEdge ,
+    }
+
+      next()
+    }
 
 
+function renderBetsPage(req, res) {
+  res.render("bets", { games: req.games, t1: req.team1, t2: req.team2, ouResults: req.ouResults   
+  });
+}
+
+app.get('/games/bets/:id', getGames, findTeam1, findTeam2, overUnder, renderBetsPage);
 

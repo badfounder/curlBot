@@ -1,0 +1,49 @@
+<%- include("_header") -%>
+
+<div class="title">
+<h1>Bet on <%= games.gameID %> </h1>
+</div>
+ 
+<div class = "row">
+
+  <div class="card" style="width:33%">
+    <div class="container">
+      <h4><b>Team 1</b></h4>
+      <p><b> Team <%= t1.teamID %></b></p>
+      <p> Win Percentage <%= t1.winPer %></p>
+      <p> Net Score <%= t1.netScore %></p>
+      <p> Net Efficiency <%= t1.netEff %></p>
+    </div>
+ 
+  </div>
+
+
+  <div class="card" style="width:33%">
+  <div class="container">
+    <h4><b>Team 2</b></h4>
+    <p><b> Team <%= t2.teamID %></b></p>
+    <p> Win Percentage <%= t2.winPer %></p>
+    <p> Net Score <%= t2.netScore %></p>
+    <p> Net Efficiency <%= t2.netEff %></p>
+  </div>
+</div>
+
+</div>
+
+<div class = "row"> </div>
+
+<div class = "row">
+<div class="card" style="width:33%">
+  <div class="container">
+    <h4><b>OverUnder</b></h4>
+    <p><b> You should bet <%= ouResults.ouBet %></b></p>
+    <p> Expected Score <%= ouResults.expScore %></p>
+    <p> OU  <%= games.ovUnd %></p>
+    <p> adjEdge <%= ouResults.adjEdge %></p>
+    <p> You should bet $<%= ouResults.betAmount %> on</p>
+  </div>
+</div>
+
+</div>
+
+<%- include("_footer") -%>
