@@ -10,25 +10,20 @@ const app = express();
 
 // Server Congfiguration
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", [path.join(__dirname, "views"), path.join(__dirname, "views","gameviews"),path.join(__dirname, "views","teamviews")]);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ type: 'application/*+json' }))
 
-// Create the DB from SQQLITE
-const db_name = path.join(__dirname, "data", "apptest.db");
-const db = new sqlite3.Database(db_name, err => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connection is estabilised to 'apptest.db'");
-});
+var db = require("./db_utils.js")
+
 
 // Création de la table Livres (Livre_ID, Titre, Auteur, Commentaires)
 const sql_create = `CREATE TABLE IF NOT EXISTS teams ( 
     "id" INTEGER PRIMARY KEY,
     "teamID" VARCHAR UNIQUE, 
     "win" REAL, 
+    "gender" TEXT,
     "lose" REAL, 
     "winPer" REAL as (ROUND("win"/("win"+"lose"),2)), 
     "ptsFor" REAL, 
@@ -51,17 +46,21 @@ db.run(sql_create, err => {
   CREATE TABLE IF NOT EXISTS games ( 
     "id" INTEGER PRIMARY KEY,
     "gameID" VARCHAR UNIQUE, 
-    "tournament" INT, 
+    "tournament" INT,
+    "draw" TEXT, 
     "date" TEXT, 
     "team1" TEXT, 
     "team2" TEXT, 
     "ovUnd" REAL, 
     "ovUndLine" REAL, 
+    "undLine" REAL,
     "team1StraightOdds" REAL,
     "team2StraightOdds" REAL, 
     "team1SpreadOdds" REAL,
     "team2SpreadOdds" REAL,
-    "ptsSprd" REAL
+    "ptsSprd" REAL,
+    "ccUUID" TEXT,
+    "gender" TEXT
   )`;
 
 db.run(sql_create2, err => {
@@ -71,7 +70,7 @@ db.run(sql_create2, err => {
   console.log("Creation of Table 'games'");
 })
   
-  // Alimentation de la table
+  // Seed Data in The Table.
   const sql_insert = `INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef) VALUES
   ("Edin",61,13,8.55,5.42,0.48,0.15),
   ("Gim",54,20,8.83,5.72,0.51,0.14),
@@ -253,7 +252,7 @@ app.get("/games/delete/:id", (req, res) => {
     if (err) {
       return console.error(err.message);
     }
-    res.render("delete", { model: row });
+    res.render("deletegames", { model: row });
   });
 });
 
@@ -321,40 +320,125 @@ function findTeam1(req, res, next) {
         (Math.round(
           ((((expScore - req.games.ovUnd) / req.games.ovUnd) + ((1 / req.games.ovUndLine) - 0.54)) * 100
         ))) / 100
-        console.log(ouEdge)
+        
     
-     const adjEdge = (ouEdge * scoreHedge)
+     const adjEdge = (Math.round((ouEdge * scoreHedge)*100)/100)
     
       if (expScore >= req.games.ovUnd) {
         ouBet = "over"
         betAmount = adjEdge*bankRoll
-        console.log(
-          `${req.games.gameID} ${req.team1.teamID}  vs ${req.team2.teamID} Bet the over game as ${expScore} is higher than ${req.games.ovUnd}  you should bet $ ${adjEdge * bankRoll} based on current bankroll. edge = ${adjEdge}`
-        );
+        // console.log(
+        //   `${req.games.gameID} ${req.team1.teamID}  vs ${req.team2.teamID} Bet the over game as ${expScore} is higher than ${req.games.ovUnd}  you should bet $ ${adjEdge * bankRoll} based on current bankroll. edge = ${adjEdge}`
+        // );
         
       } else {
         ouBet = "under"
         betAmount = adjEdge*bankRoll
-        console.log(
-          `${req.games.gameID} ${req.team1.teamID} vs ${req.team2.teamID} Bet the under because ${expScore} is lower than ${req.games.ovUnd} you should bet $ ${adjEdge * bankRoll} based on current bankroll. ${adjEdge}`
-        );
+        // console.log(
+        //   `${req.games.gameID} ${req.team1.teamID} vs ${req.team2.teamID} Bet the under because ${expScore} is lower than ${req.games.ovUnd} you should bet $ ${adjEdge * bankRoll} based on current bankroll. ${adjEdge}`
+        // );
       }
       
-    req.ouResults = { 
-      expScore, 
-      ouBet,
-   betAmount,
-    adjEdge ,
+  req.ouResults = { 
+  expScore, 
+  ouBet,
+  betAmount,
+  adjEdge ,
     }
 
       next()
     }
 
+    function moneyLineEval(req, res, next){
 
-function renderBetsPage(req, res) {
-  res.render("bets", { games: req.games, t1: req.team1, t2: req.team2, ouResults: req.ouResults   
+      let lookAtWinPer = req.team1.winPer - req.team2.winPer;
+      let lookAtNetScore = req.team1.netScore - req.team2.netScore;
+      let lookAtNetEff = req.team1.netEff - req.team2.netEff
+      let team1ImpPer = Math.round(((1/req.games.team1StraightOdds)-.04)*100)/100 ;
+      let favouriteFinder = (req) => {
+     
+        if(req.games.team2StraightOdds - req.games.team1StraightOdds > 0){
+          return req.team1.teamID
+        } 
+        else {
+          return req.team2.teamID
+      }
+    };
+    
+    function getWinProb(){
+      const yInt = 0.4811
+      const cwinPer = 0.9843
+      const cnetScore = -0.0324
+      const cnetEff = 0.9823  
+      
+      return Math.round((yInt + (cwinPer*lookAtWinPer) + (cnetScore*lookAtNetScore) + (cnetEff*lookAtNetEff))*100)/100;
+    }
+
+    let estWinProb = getWinProb();
+    let mlEdge = estWinProb - team1ImpPer
+
+    let favourite= favouriteFinder(req)
+      // console.log(`${req.games.gameID} MoneyLine ${req.team1.teamId} : is ${favourite} , with, ${team1ImpPer}% ,chance to win.,  Net Win Per, ${lookAtWinPer} , Net Score, ${lookAtNetScore}, Net Efficiency, ${lookAtNetEff}`)
+      
+      req.mlResults = { 
+        lookAtWinPer,
+        lookAtNetScore,
+        lookAtNetEff,
+        team1ImpPer,
+        favourite,
+        estWinProb,
+        mlEdge 
+      }
+
+next()
+
+      };
+
+      function spreadEval(req, res, next) {
+        const spreadDescrepancy = .75 //This is a threshold for when to bet on moneyline mispricing 1=1point
+        let t1expNetScore = (Math.round((req.team1.netScore - req.team2.netScore )*100)/100);
+        let t2expNetScore = (Math.round((req.team2.netScore - req.team1.netScore )*100)/100);
+        let team1ptsSprd = (-1 * req.games.ptsSprd)
+        let team2ptsSprd = req.games.ptsSprd;
+        let team1sprdPer =  (Math.round(req.games.team2SpreadOdds / (req.games.team1SpreadOdds + req.games.team2SpreadOdds)*100)/100);
+        let team2sprdPer =  (Math.round(req.games.team1SpreadOdds / (req.games.team1SpreadOdds + req.games.team2SpreadOdds)*100)/100);
+        let sprdBet = "";
+
+      //  console.log(`${req.games.gameID}: ${req.team1.teamID} expected netscore ${t1expNetScore} vs points spread of ${team1ptsSprd}`)
+      
+       if (team1ptsSprd - t1expNetScore > spreadDescrepancy){
+      sprdBet = "team2"
+      }
+      
+      
+      else if (team2ptsSprd - t2expNetScore > spreadDescrepancy) {
+      
+      sprdBet = "team1"
+      }
+      
+      else {
+      sprdBet = "no bet"
+      };
+  
+      req.sprdResults = { 
+        t1expNetScore,
+        t2expNetScore,
+        team1ptsSprd,
+        team2ptsSprd,
+        team2sprdPer,
+        team1sprdPer,
+        sprdBet 
+      }
+
+next()
+  
+};
+
+  
+  function renderBetsPage(req, res) {
+  res.render("bets", { games: req.games, t1: req.team1, t2: req.team2, ouResults: req.ouResults, mlResults: req.mlResults, sprdResults: req.sprdResults   
   });
 }
 
-app.get('/games/bets/:id', getGames, findTeam1, findTeam2, overUnder, renderBetsPage);
 
+app.get('/games/bets/:id', getGames, findTeam1, findTeam2, overUnder, moneyLineEval, spreadEval, renderBetsPage);

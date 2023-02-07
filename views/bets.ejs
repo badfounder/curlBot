@@ -44,6 +44,34 @@
   </div>
 </div>
 
+<div class="card" style="width:33%">
+  <div class="container">
+    <h4><b>Moneyline</b></h4>
+    <p> The Favourite is <%= mlResults.favourite %> </p>
+    <p> Team 1 line Probabillity <%= mlResults. team1ImpPer %></p>
+    <p> Win Per <%= mlResults.lookAtWinPer %></p>
+    <p> Score Differential <%= mlResults.lookAtNetScore %></p>
+    <p> Efficiency Differential <%= mlResults.lookAtNetEff %></p>
+    
+  </div>
+
+</div>
+
+<div class="card" style="width:33%">
+  <div class="container">
+    <h4><b>Points Spread</b></h4>
+    <p><b> Take  <%= sprdResults.sprdBet %> with the line.</b></p>
+    <p> Expected Differential <%= sprdResults.t1expNetScore %></p>
+    <p>PtS Spread <%= sprdResults.team1ptsSprd %> </p>
+    <p> Total Discrepancy is  <%= sprdResults.team1ptsSprd - sprdResults.t1expNetScore %> </p>
+    <p> Team 1 per <%= sprdResults.team1sprdPer %></p>
+    <p> Team 2 per <%= sprdResults.team2sprdPer %></p>
+    
+  </div>
+
+</div>
+
 </div>
 
 <%- include("_footer") -%>
+
