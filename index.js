@@ -3,7 +3,13 @@ const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
-const db = require("./data/db_utils.js") //brings in data base mgmt module
+const db_name = path.join(__dirname,"apptest.db");
+const db = new sqlite3.Database(db_name, err => {
+  if (err) {
+    return console.error(err.message);
+  }
+  console.log("Connection is estabilised to 'apptest.db'");
+}); //brings in data base mgmt module
 const dbUtils = require("./data/db_utils.js") //diferent data base functions as methods
 
 const bankRoll = 1000
@@ -24,10 +30,10 @@ app.listen(3000, () => {
 });
 
 
-dbUtils.ctt 
+// dbUtils.ctt 
 
 
-dbUtils.cgt //Creates a second table for games and seeds its with data.
+// dbUtils.cgt //Creates a second table for games and seeds its with data.
  
  
 // GET /
