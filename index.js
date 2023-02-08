@@ -4,6 +4,7 @@ const sqlite3 = require("sqlite3").verbose();
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
 const db = require("./data/db_utils.js") //brings in data base mgmt module
+const dbUtils = require("./data/db_utils.js") //diferent data base functions as methods
 
 const bankRoll = 1000
 
@@ -23,9 +24,10 @@ app.listen(3000, () => {
 });
 
 
-//calling functions to create SQL Tables
-db.ctt //Creates the table teams and seeds it with data. (Function from db_utils)
-db.cgt //Creates a second table for games and seeds its with data.
+dbUtils.ctt 
+
+
+dbUtils.cgt //Creates a second table for games and seeds its with data.
  
  
 // GET /
