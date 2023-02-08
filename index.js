@@ -3,7 +3,9 @@ const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
-db = require('./data/db_utils.js')
+var db = require('./data/db_config.js')
+var dbUtils = require('./data/db_utils.js')
+bankRoll = 1000
 
 
 //Express Server Creation
@@ -20,7 +22,10 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 app.listen(3000, () => {
   console.log("Server started (http://localhost:3000/) !");
 });
- 
+
+// Create the games and teams tables.
+dbUtils.createTeamsTable()
+dbUtils.createGamesTable()
  
 // GET /
 app.get("/", (req, res) => {
@@ -58,8 +63,8 @@ app.get("/teams/create", (req, res) => {
 
 // POST /create teams 
 app.post("/teams/create", (req, res) => {
- const sql = "INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef) VALUES (?,?,?,?,?,?,?)";
- const thing = [req.body.teamID, req.body.win, req.body.lose, req.body.ptsFor, req.body.ptsAgainst, req.body.hamEff,req.body.stlDef];
+ const sql = "INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef,ccID) VALUES (?,?,?,?,?,?,?)";
+ const thing = [req.body.teamID, req.body.win, req.body.lose, req.body.ptsFor, req.body.ptsAgainst, req.body.hamEff,req.body.stlDef,req.body.ccID];
   db.run(sql,thing, err => {
     if (err) {
       return console.error(err.message);

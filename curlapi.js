@@ -1,22 +1,8 @@
 
 
 
-// async function  getTeams(){
-// te
-//   .then((response) => response.json())
-//   .then((data) => { 
+,
 
-//     const sql = "INSERT OR IGNORE INTO teams (teamID,ccID) VALUES (?,?)";
-//     const insert = [data.name, data.id];
-//   }    
-//    .then(data)={} for (const team of data)
-  
-
-    
-   
-//   });
-//   })
-// }
 
 async function getTeams () {
 fetch('https://legacy-curlingio.global.ssl.fastly.net/api/organizations/qw4LUsJ1_aQ/competitions/8079/teams')
@@ -27,7 +13,7 @@ return teams;
 
 getTeams().then(teams =>{ 
   for (const team of teams) 
-  console.log(team.id,team.name)
+  fetch('http://localhost:3000/games/create',{method:'POST',body:{ccid:team.id, teamID:team.name}})
 
   })
 
