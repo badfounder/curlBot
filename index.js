@@ -3,19 +3,7 @@ const path = require("path");
 const sqlite3 = require("sqlite3").verbose();
 var bodyParser = require('body-parser');
 const { json } = require("body-parser");
-
-
-const db_name = path.join(__dirname, "data", "apptest.db");
-const db = new sqlite3.Database(db_name, err => {
-  if (err) {
-    return console.error(err.message);
-  }
-  console.log("Connexion réussie à la base de données 'apptest.db'");
-});
-
-
-const dbUtils = require("./data/db_utils.js") //diferent data base functions as methods
-
+db = require('./data/db_utils.js')
 
 
 //Express Server Creation
@@ -32,12 +20,6 @@ app.use(bodyParser.json({ type: 'application/*+json' }))
 app.listen(3000, () => {
   console.log("Server started (http://localhost:3000/) !");
 });
-
-
-// dbUtils.ctt 
-
-
-// dbUtils.cgt //Creates a second table for games and seeds its with data.
  
  
 // GET /
