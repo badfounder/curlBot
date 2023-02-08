@@ -11,16 +11,13 @@ const db = new sqlite3.Database(db_name, err => {
 });
 
 
-
-
 // Creation of Teams Table. 
 
 const createTeamsTable = ()=> {
 const sql_create = `CREATE TABLE IF NOT EXISTS teams ( 
   "id" INTEGER PRIMARY KEY,
   "teamID" VARCHAR UNIQUE, 
-  "win" REAL,
-  "ccID" REAL, 
+  "win" REAL, 
   "gender" TEXT,
   "lose" REAL, 
   "winPer" REAL as (ROUND("win"/("win"+"lose"),2)), 
@@ -103,7 +100,7 @@ db.run(sql_insert, err => {
 
 
 
-module.exports = {db , ctt: createTeamsTable() , cgt: createGamesTable() }
+module.exports = { db }
 
 
  
