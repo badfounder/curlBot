@@ -5,8 +5,9 @@ var bodyParser = require('body-parser');
 const { json } = require("body-parser");
 var db = require('./data/db_config.js')
 var dbUtils = require('./data/db_utils.js')
-bankRoll = 1000
+var cors = require('cors')
 
+bankRoll = 1000
 
 //Express Server Creation
 const app = express();
@@ -16,16 +17,37 @@ app.set("view engine", "ejs");
 app.set("views", [path.join(__dirname, "views"), path.join(__dirname, "views","gameviews"),path.join(__dirname, "views","teamviews")]);
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.json({ type: 'application/*+json' }))
+app.use(bodyParser.json())
+
+///new stuff to make requestswork/
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+    return res.status(200).json({});
+  }
+  next();
+});
+
+
+
 
 // Launch the server
 app.listen(3000, () => {
   console.log("Server started (http://localhost:3000/) !");
 });
 
+//Enable Cross Origin Response.
+app.use(cors())
+
 // Create the games and teams tables.
 dbUtils.createTeamsTable()
 dbUtils.createGamesTable()
+dbUtils.createOUBetsTable()
  
 // GET /
 app.get("/", (req, res) => {
@@ -61,10 +83,12 @@ app.get("/teams/create", (req, res) => {
   res.render("create", { model: {} });
 });
 
+
 // POST /create teams 
-app.post("/teams/create", (req, res) => {
- const sql = "INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef,ccID) VALUES (?,?,?,?,?,?,?)";
- const thing = [req.body.teamID, req.body.win, req.body.lose, req.body.ptsFor, req.body.ptsAgainst, req.body.hamEff,req.body.stlDef,req.body.ccID];
+app.post("/teams/create", cors(), (req, res) => {
+  console.log(req.body)
+  const sql = "INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef,ccID,gender) VALUES (?,?,?,?,?,?,?,?,?)";
+ const thing = [req.body.teamID, req.body.win, req.body.lose, req.body.ptsFor, req.body.ptsAgainst, req.body.hamEff,req.body.stlDef,req.body.ccID, req.body.gender];
   db.run(sql,thing, err => {
     if (err) {
       return console.error(err.message);
@@ -134,8 +158,8 @@ app.get("/games/create", (req, res) => {
 
 // POST /games/create
 app.post("/games/create", (req, res) => {
- const sql = "INSERT OR IGNORE INTO games (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,team1StraightOdds,team2StraightOdds,team1SpreadOdds,team2SpreadOdds,ptsSprd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
- const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.team1StraightOdds,req.body.team2StraightOdds,req.body.team1SpreadOdds,req.body.team2SpreadOdds.ptsSprd];
+ const sql = "INSERT OR IGNORE INTO games (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,team1StraightOdds,team2StraightOdds,team1SpreadOdds,team2SpreadOdds,ptsSprd,draw,ccUUID,gender,ccIDteam1,ccIDteam2) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+ const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.team1StraightOdds,req.body.team2StraightOdds,req.body.team1SpreadOdds,req.body.team2SpreadOdds, req.body.ptsSprd,req.body.draw,req.body.ccUUID,req.body.gender,req.body.ccIDteam1,req.body.ccIDteam2];
   db.run(sql,thing, err => {
     if (err) {
       return console.error(err.message);
@@ -267,6 +291,8 @@ function findTeam1(req, res, next) {
   ouBet,
   betAmount,
   adjEdge ,
+  scoreHedge,
+
     }
 
       next()
@@ -365,3 +391,30 @@ next()
 
 
 app.get('/games/bets/:id', getGames, findTeam1, findTeam2, overUnder, moneyLineEval, spreadEval, renderBetsPage);
+
+// POST /games/create
+app.post("/games/mlbets/create", (req, res) => {
+  const sql = "INSERT OR IGNORE INTO OubBts (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,draw,ccUUID,gender,ccIDteam1,ccIDteam2) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.draw,req.body.ccUUID,req.body.gender,req.body.ccIDteam1,req.body.ccIDteam2,req.body.ouBet
+  req.body.betAmount,req.body.adjEdge,req.body.scoreHedge ];
+   db.run(sql,thing, err => {
+     if (err) {
+       return console.error(err.message);
+     }
+     res.redirect("/games");
+   });
+ });
+
+
+//  app.post("/games/mlbets/create", (req, res) => {
+//   const sql = "INSERT OR IGNORE INTO OubBts (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,draw,ccUUID,gender,ccIDteam1,ccIDteam2) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+//   const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.draw,req.body.ccUUID,req.body.gender,req.body.ccIDteam1,req.body.ccIDteam2,req.body.ouBet
+//   req.body.betAmount,req.body.adjEdge,req.body.scoreHedge ];
+//    db.run(sql,thing, err => {
+//      if (err) {
+//        return console.error(err.message);
+//      }
+//      res.redirect("/games");
+//    });
+//  });
+
