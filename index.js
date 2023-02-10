@@ -395,7 +395,7 @@ app.get('/games/bets/:id', getGames, findTeam1, findTeam2, overUnder, moneyLineE
 // POST /games/create
 app.post("/games/mlbets/create", (req, res) => {
   const sql = "INSERT OR IGNORE INTO OubBts (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,draw,ccUUID,gender,ccIDteam1,ccIDteam2) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.draw,req.body.ccUUID,req.body.gender,req.body.ccIDteam1,req.body.ccIDteam2,req.body.ouBet
+  const thing = [req.body.gameID, req.body.tournament, req.body.date, req.body.team1, req.body.team2, req.body.ovUnd,req.body.ovUndLine,req.body.draw,req.body.ccUUID,req.body.gender,req.body.ccIDteam1,req.body.ccIDteam2,req.body.ouBet,
   req.body.betAmount,req.body.adjEdge,req.body.scoreHedge ];
    db.run(sql,thing, err => {
      if (err) {
