@@ -1,7 +1,7 @@
 <%- include("_header") -%>
 
 <div class="title">
-<h1>Bet on <%= games.gameID %> </h1>
+<h1>Bet on <%= games.gameID %> <%= games.id + 1 %> </h1>
 </div>
  
 <div class = "row">
@@ -69,6 +69,18 @@
   </div>
 
 </div>
+
+</div>
+
+
+
+
+<div class = "row">
+  <h1> <% nextPage = games.id + 1 %> </h1>
+    <% prevPage = games.gameID -1 %>
+  <a class="btn btn-sm btn-success" href="/games/bets/<%= games.id - 1 %>"> Previous Game</a>    
+  <a class="btn btn-sm btn-success" href="/games/bets/<%= games.id + 1 %>"  > Next Game</a> 
+
 
 </div>
 
