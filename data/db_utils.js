@@ -52,7 +52,11 @@ const createTeamsTable = ()=> {
       "date" TEXT, 
       "team1" TEXT,
       "ccIDteam1" TEXT,
+<<<<<<< HEAD
       "ccIDteam2" TEXT,
+=======
+      "ccIDteam2" TEXT, 
+>>>>>>> teamAPI-Update
       "team2" TEXT, 
       "ovUnd" REAL, 
       "ovUndLine" REAL, 

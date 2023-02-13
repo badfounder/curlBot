@@ -86,7 +86,7 @@ app.get("/teams/create", (req, res) => {
 
 // POST /create teams 
 app.post("/teams/create", cors(), (req, res) => {
-  console.log(req.body)
+  // console.log(req.body)
   const sql = "INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef,ccID,gender) VALUES (?,?,?,?,?,?,?,?,?)";
  const thing = [req.body.teamID, req.body.win, req.body.lose, req.body.ptsFor, req.body.ptsAgainst, req.body.hamEff,req.body.stlDef,req.body.ccID, req.body.gender];
   db.run(sql,thing, err => {
@@ -190,6 +190,23 @@ app.post("/games/edit/:id", (req, res) => {
     res.redirect("/games");
   });
 });
+
+//test out a put 
+
+app.put("/games/edit/api/:ccUUID", (req, res) => {
+  const ident = req.params.id;
+  const team = [ req.body.team1, req.body.team2, req.params.ccUUID];
+  const sql = "UPDATE games SET team1 = ?, team2 = ? WHERE (ccUUID = ?) ";
+  db.run(sql, team, err => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.redirect("/games");
+  });
+  console.log(req.params.ccUUID)
+  console.log(req.body)
+});
+
 
 // GET /delete/5
 app.get("/games/delete/:id", (req, res) => {
