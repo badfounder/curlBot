@@ -51,8 +51,8 @@ const createTeamsTable = ()=> {
       "draw" INT, 
       "date" TEXT, 
       "team1" TEXT,
-      "ccIDteam1" TEXT
-      "ccIDteam2" TEXT 
+      "ccIDteam1" TEXT,
+      "ccIDteam2" TEXT, 
       "team2" TEXT, 
       "ovUnd" REAL, 
       "ovUndLine" REAL, 
