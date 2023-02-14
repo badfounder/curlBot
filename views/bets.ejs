@@ -27,7 +27,7 @@
   </div>
 </div>
 
-</div>
+</div> 
 
 <div class = "row"> </div>
 
@@ -35,24 +35,24 @@
 <div class="card" style="width:33%">
   <div class="container">
     <h3><b>OverUnder</b></h3>
-    <p><b> You should bet $<%= ouResults.betAmount %> on <%= ouResults.ouBet %></b></p>
-    <p> Expected Score: <%= ouResults.expScore %></p>
-    <p> OU:  <%= games.ovUnd %></p>
-    <p> adjEdge: <%= ouResults.adjEdge %></p>
+    <p> <b> You should bet $<%= ouResults.betAmount %> on <%= ouResults.ouBet %></b></p>
+    <p> <i>Expected Score: </i> <b><%= ouResults.expScore %></b></p>
+    <p> <i>OU:  </i> <b><%= games.ovUnd %></b></p>
+    <p> <i>adjEdge:</i><b> <%= ouResults.adjEdge %></b></p>
     
   </div>
 </div>
 
 <div class="card" style="width:33%">
   <div class="container">
-    <h4><b>Moneyline</b></h4>
-    <p> The edge equal to <%= mlResults.mlEdge %> </p>
-    <p> The Favourite is <%= mlResults.favourite %> </p>
-    <p> Team 1 line Probabillity <%= mlResults. team1ImpPer %></p>
-    <p> Win Per: <%= mlResults.lookAtWinPer %></p>
-    <p> Score Differential: <%= mlResults.lookAtNetScore %></p>
-    <p> Efficiency Differential: <%= mlResults.lookAtNetEff %></p>
-    
+    <h3><b>Moneyline</b></h3>
+    <p><b> You should bet $<%= mlResults.mlBetAmt %> on  <%= mlResults.mlBet %> </b></p>
+    <p> <i>Edge:</i> <b><%= mlResults.mlEdge %> </b></p>
+    <p> <i>Team 1 Imp Win %:</i> <b><%= mlResults.team1ImpPer %></b> </p>
+    <p> <i>Win Per Differential:</i> <b><%= mlResults.lookAtWinPer %></b> </p>
+    <p> <i>Score Differential:</i> <b><%= mlResults.lookAtNetScore %></b></p>
+    <p> <i>Efficiency Differential:</i> <b><%= mlResults.lookAtNetEff %></b></p>
+  
   </div>
 
 </div>
@@ -60,20 +60,16 @@
 <div class="card" style="width:33%">
   <div class="container">
     <h3><b>Points Spread</b></h3>
-    <p><b> Take  <%= sprdResults.sprdBet %> with the line.</b></p>
-    <p> Expected Differential <%= sprdResults.t1expNetScore %></p>
-    <p>Pts Spread: <%= sprdResults.team1ptsSprd %> </p>
-    <p> Total Discrepancy is  <%= sprdResults.team1ptsSprd - sprdResults.t1expNetScore %> </p>
-    <p> Team 1 per: <%= sprdResults.team1sprdPer %></p>
-    <p> Team 2 per: <%= sprdResults.team2sprdPer %></p>
+    <p><b> You should  <%= sprdResults.sprdBet %> on this game</b></p>
+    <p> <i>Expected Differential (for T1)</i> <b><%= sprdResults.t1expNetScore %></b> </p>
+    <p><i>Pts Spread Implied Diff (for T1) </i> <b><%= sprdResults.team1ptsSprd %> </b> </p>
+    <p> <i>Total Discrepancy is </i> <b><%= sprdResults.team1ptsSprd - sprdResults.t1expNetScore %> </b> </p>
+    <p> <i>Team 1 to cover per:</i> <b><%= sprdResults.team1sprdPer %></b> </p>
+    <p> <i>Team 2 to cover per:</i> <b><%= sprdResults.team2sprdPer %></b> </p>
     
   </div>
-
 </div>
-
 </div>
-
-
 
 
 <div class = "row">

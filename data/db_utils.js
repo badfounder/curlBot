@@ -96,8 +96,6 @@ const createTeamsTable = ()=> {
       CREATE TABLE IF NOT EXISTS OuBets ( 
         "id" INTEGER PRIMARY KEY,
         "gameID" VARCHAR UNIQUE, 
-        "tournament" INT,
-        "draw" INT, 
         "date" TEXT, 
         "team1" TEXT,
         "ccIDteam1" TEXT,
@@ -111,8 +109,7 @@ const createTeamsTable = ()=> {
         "betAmount" REAL,
         "adjEdge" REAL,
         "scoreHedge" REAL,
-        "ccUUID" TEXT,
-        "gender" TEXT
+        "ccUUID" TEXT
       )`;
       
       db.run(sql_create, err => {
@@ -122,5 +119,33 @@ const createTeamsTable = ()=> {
       console.log("Creation of Table 'OUBets'");
       })
     }
+
+    const createMLBetsTable = ()=> {
+      const sql_create = `
+      CREATE TABLE IF NOT EXISTS MLBets ( 
+        "id" INTEGER PRIMARY KEY,
+        "gameID" VARCHAR UNIQUE, 
+        "team1" TEXT,
+        "ccIDteam1" TEXT,
+        "ccIDteam2" TEXT, 
+        "team2" TEXT, 
+        "ccUUID" TEXT,
+        "lookAtWinPer" REAL, 
+        "lookAtNetScore" REAL, 
+        "lookAtNetEff" REAL,
+        "team1ImpPer" REAL, 
+        "mlBetAmt" REAL,
+        "estWinProb" REAL,
+        "mlEdge" REAL,
+        "mlBet" REAL 
+      )`;
+      
+      db.run(sql_create, err => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log("Creation of Table 'MLBets'");
+      })
+    }
     
-    module.exports = { createGamesTable , createTeamsTable, createOUBetsTable }
+    module.exports = { createGamesTable , createTeamsTable, createOUBetsTable, createMLBetsTable }

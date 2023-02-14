@@ -45,6 +45,7 @@ app.use(cors())
 dbUtils.createTeamsTable()
 dbUtils.createGamesTable()
 dbUtils.createOUBetsTable()
+dbUtils.createMLBetsTable()
  
 // GET /
 app.get("/", (req, res) => {
@@ -65,7 +66,7 @@ app.get("/teams", (req, res) => {
 
   // GET /games
 app.get("/games", (req, res) => {
-  const sql = "SELECT * FROM games ORDER BY gameID";
+  const sql = "SELECT * FROM games ORDER BY draw";
   db.all(sql, [], (err, rows) => {
     if (err) {
       return console.error(err.message);
@@ -308,8 +309,8 @@ function findTeam1(req, res, next) {
   scoreHedge,
 
     }
-  const sql = "INSERT OR IGNORE INTO OuBets (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,draw,ccUUID,gender,ccIDteam1,ccIDteam2,ouBet,betAmount,adjEdge,scoreHedge,expScore) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-  const thing = [req.games.gameID, req.games.tournament, req.games.date, req.games.team1, req.games.team2, req.games.ovUnd,req.games.ovUndLine,req.games.draw,req.games.ccUUID,req.games.gender,req.games.ccIDteam1,req.games.ccIDteam2,req.ouResults.ouBet,
+  const sql = "INSERT OR IGNORE INTO OuBets (gameID,team1,team2,ovUnd,ovUndLine,ccUUID,ccIDteam1,ccIDteam2,ouBet,betAmount,adjEdge,scoreHedge,expScore) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  const thing = [req.games.gameID,req.games.team1, req.games.team2, req.games.ovUnd,req.games.ovUndLine,req.games.ccUUID,req.games.ccIDteam1,req.games.ccIDteam2,req.ouResults.ouBet,
   req.ouResults.betAmount,req.ouResults.adjEdge,req.ouResults.scoreHedge,req.ouResults.expScore];
    db.run(sql,thing, err => {
      if (err) {
@@ -323,7 +324,9 @@ function findTeam1(req, res, next) {
 
     function moneyLineEval(req, res, next){
 
-      let lookAtWinPer = req.team1.winPer - req.team2.winPer;
+      const reqEdge = "";
+      let mlBet = "";
+      let lookAtWinPer = Math.round((req.team1.winPer - req.team2.winPer)*1000)/1000;
       let lookAtNetScore = req.team1.netScore - req.team2.netScore;
       let lookAtNetEff = req.team1.netEff - req.team2.netEff
       let team1ImpPer = Math.round(((1/req.games.team1StraightOdds)-.04)*100)/100 ;
@@ -347,7 +350,13 @@ function findTeam1(req, res, next) {
     }
 
     let estWinProb = getWinProb();
-    let mlEdge = estWinProb - team1ImpPer
+    let mlEdge = Math.round((estWinProb - team1ImpPer)*1000)/1000
+
+
+if (mlEdge > reqEdge){ mlBet = "Team1" ;
+}else if(mlEdge < (-1* reqEdge)){mlBet = "Team2" ;}else{mlBet = "No Bet ;"}
+    
+let mlBetAmt = Math.round((mlEdge * bankRoll)*100)/100
 
     let favourite= favouriteFinder(req)
       // console.log(`${req.games.gameID} MoneyLine ${req.team1.teamId} : is ${favourite} , with, ${team1ImpPer}% ,chance to win.,  Net Win Per, ${lookAtWinPer} , Net Score, ${lookAtNetScore}, Net Efficiency, ${lookAtNetEff}`)
@@ -357,11 +366,19 @@ function findTeam1(req, res, next) {
         lookAtNetScore,
         lookAtNetEff,
         team1ImpPer,
-        favourite,
+        mlBetAmt,
         estWinProb,
-        mlEdge 
+        mlEdge, 
+        mlBet
       }
-
+      const sql = "INSERT OR IGNORE INTO MLBets (gameID,team1,team2,ccUUID,ccIDteam1,ccIDteam2,lookAtWinPer, lookAtNetScore,lookAtNetEff,team1ImpPer,mlBetAmt,estWinProb,mlEdge,mlBet) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+      const thing = [req.games.gameID,req.games.team1, req.games.team2,req.games.ccUUID,req.games.ccIDteam1,req.games.ccIDteam2,
+      req.mlResults.lookAtWinPer,req.mlResults.lookAtNetScore,req.mlResults.lookAtNetEff,req.mlResults.team1ImpPer,req.mlResults.mlBetAmt,req.mlResults.estWinProb,req.mlResults.mlEdge,req.mlResults.mlBet];
+       db.run(sql,thing, err => {
+         if (err) {
+           return console.error(err.message);
+         }
+        });
 next()
 
       };
@@ -401,6 +418,7 @@ next()
         team1sprdPer,
         sprdBet 
       }
+      
 
 next()
   
