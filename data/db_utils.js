@@ -137,7 +137,7 @@ const createTeamsTable = ()=> {
         "mlBetAmt" REAL,
         "estWinProb" REAL,
         "mlEdge" REAL,
-        "mlBet" REAL 
+        "mlBet" TEXT 
       )`;
       
       db.run(sql_create, err => {
@@ -148,4 +148,34 @@ const createTeamsTable = ()=> {
       })
     }
     
-    module.exports = { createGamesTable , createTeamsTable, createOUBetsTable, createMLBetsTable }
+   
+//Create Points Spread Table.
+    const createPSBetsTable = ()=> {
+      const sql_create = `
+      CREATE TABLE IF NOT EXISTS PSBets ( 
+        "id" INTEGER PRIMARY KEY,
+        "gameID" VARCHAR UNIQUE, 
+        "team1" TEXT,
+        "ccIDteam1" TEXT,
+        "ccIDteam2" TEXT, 
+        "team2" TEXT, 
+        "ccUUID" TEXT,
+        "t1expNetScore" REAL, 
+        "t2expNetScore" REAL, 
+        "team1ptsSprd" REAL,
+        "team2ptsSprd" REAL, 
+        "team2sprdPer" REAL,
+        "team1sprdPer" REAL,
+        "sprdBet" TEXT,
+        "sprdBetAmt" REAL 
+      )`;
+      
+      db.run(sql_create, err => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log("Creation of Table 'PSBets'");
+      })
+    }
+
+    module.exports = { createGamesTable , createTeamsTable, createOUBetsTable, createMLBetsTable, createPSBetsTable  }

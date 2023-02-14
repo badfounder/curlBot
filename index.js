@@ -46,6 +46,7 @@ dbUtils.createTeamsTable()
 dbUtils.createGamesTable()
 dbUtils.createOUBetsTable()
 dbUtils.createMLBetsTable()
+dbUtils.createPSBetsTable() 
  
 // GET /
 app.get("/", (req, res) => {
@@ -392,6 +393,7 @@ next()
         let team1sprdPer =  (Math.round(req.games.team2SpreadOdds / (req.games.team1SpreadOdds + req.games.team2SpreadOdds)*100)/100);
         let team2sprdPer =  (Math.round(req.games.team1SpreadOdds / (req.games.team1SpreadOdds + req.games.team2SpreadOdds)*100)/100);
         let sprdBet = "";
+        let sprdBetAmt = "";
 
       //  console.log(`${req.games.gameID}: ${req.team1.teamID} expected netscore ${t1expNetScore} vs points spread of ${team1ptsSprd}`)
       
@@ -416,10 +418,18 @@ next()
         team2ptsSprd,
         team2sprdPer,
         team1sprdPer,
-        sprdBet 
+        sprdBet,
+        sprdBetAmt 
       }
       
-
+      const sql = "INSERT OR IGNORE INTO PSBets (gameID,team1,team2,ccUUID,ccIDteam1,ccIDteam2,t1expNetScore,t2expNetScore,team1ptsSprd,team2ptsSprd,team1sprdPer,team2sprdPer,sprdBet,sprdBetAmt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+      const thing = [req.games.gameID,req.games.team1, req.games.team2,req.games.ccUUID,req.games.ccIDteam1,req.games.ccIDteam2,
+      req.sprdResults.t1expNetScore,req.sprdResults.t2expNetScore,req.sprdResults.team1ptsSprd,req.sprdResults.team2ptsSprd,req.sprdResults.team1sprdPer,req.sprdResults.team2sprdPer,req.sprdResults.sprdBet,req.sprdResults.sprdBetAmt];
+       db.run(sql,thing, err => {
+         if (err) {
+           return console.error(err.message);
+         }
+        });
 next()
   
 };
