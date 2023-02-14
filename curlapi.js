@@ -4,7 +4,7 @@ const url = 'https://legacy-curlingio.global.ssl.fastly.net/api/organizations/' 
 const org = 'qw4LUsJ1_aQ/' // This is a unique org ID; 'qw4LUsJ1_aQ/' is Curling Canada ORG ID  & LgN7sn6ydNI/ is GSOC ORD ID
 const compID = 'competitions/8079/' /// This is the ID of the tournament. 
 let compURL = url+org+compID //core URI for requests/
-const teamEP = "teams" //teams endpoint
+const teamEP = "teams" //Teams endpoint
 const gamesEP = "games" //Games endpoint
 const gender = "women" /// This is just text, for whatever reason not in an API. 
 
