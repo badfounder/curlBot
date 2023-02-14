@@ -52,11 +52,7 @@ const createTeamsTable = ()=> {
       "date" TEXT, 
       "team1" TEXT,
       "ccIDteam1" TEXT,
-<<<<<<< HEAD
-      "ccIDteam2" TEXT,
-=======
       "ccIDteam2" TEXT, 
->>>>>>> teamAPI-Update
       "team2" TEXT, 
       "ovUnd" REAL, 
       "ovUndLine" REAL, 
@@ -104,8 +100,8 @@ const createTeamsTable = ()=> {
         "draw" INT, 
         "date" TEXT, 
         "team1" TEXT,
-        "ccIDteam1" TEXT
-        "ccIDteam2" TEXT 
+        "ccIDteam1" TEXT,
+        "ccIDteam2" TEXT, 
         "team2" TEXT, 
         "ovUnd" REAL, 
         "ovUndLine" REAL, 
@@ -123,7 +119,7 @@ const createTeamsTable = ()=> {
       if (err) {
         return console.error(err.message);
       }
-      console.log("Creation of Table 'games'");
+      console.log("Creation of Table 'OUBets'");
       })
     }
     

@@ -1,7 +1,7 @@
 <%- include("_header") -%>
 
 <div class="title">
-<h1>Bet on <%= games.gameID %> <%= games.id + 1 %> </h1>
+<h1>Bet on <%= games.gameID %> </h1>
 </div>
  
 <div class = "row">
@@ -9,10 +9,10 @@
   <div class="card" style="width:33%">
     <div class="container">
       <h4><b>Team 1</b></h4>
-      <p><b> Team <%= t1.teamID %></b></p>
-      <p> Win Percentage <%= t1.winPer %></p>
-      <p> Net Score <%= t1.netScore %></p>
-      <p> Net Efficiency <%= t1.netEff %></p>
+      <h6><b> Team <%= t1.teamID %></b></h6>
+      <p><i> Win Percentage: </i><b> <%= t1.winPer %></b></p>
+      <p> <i> Net Score:</i><b> <%= t1.netScore %></b></p>
+      <p> <i> Net Efficiency:</i> <b><%= t1.netEff %></b></p>
     </div>
  
   </div>
@@ -20,10 +20,10 @@
   <div class="card" style="width:33%">
   <div class="container">
     <h4><b>Team 2</b></h4>
-    <p><b> Team <%= t2.teamID %></b></p>
-    <p> Win Percentage <%= t2.winPer %></p>
-    <p> Net Score <%= t2.netScore %></p>
-    <p> Net Efficiency <%= t2.netEff %></p>
+    <h6><b> Team <%= t2.teamID %></b></h6>
+    <p> <i> Percentage:</i><b> <%= t2.winPer %></b></p>
+    <p><i> Net Score: </i> <b> </b><%= t2.netScore %></b></p>
+    <p> <i>Net Efficiency: </i> <b><%= t2.netEff %></b></p>
   </div>
 </div>
 
@@ -34,23 +34,24 @@
 <div class = "row">
 <div class="card" style="width:33%">
   <div class="container">
-    <h4><b>OverUnder</b></h4>
-    <p><b> You should bet <%= ouResults.ouBet %></b></p>
-    <p> Expected Score <%= ouResults.expScore %></p>
-    <p> OU  <%= games.ovUnd %></p>
-    <p> adjEdge <%= ouResults.adjEdge %></p>
-    <p> You should bet $<%= ouResults.betAmount %> on</p>
+    <h3><b>OverUnder</b></h3>
+    <p><b> You should bet $<%= ouResults.betAmount %> on <%= ouResults.ouBet %></b></p>
+    <p> Expected Score: <%= ouResults.expScore %></p>
+    <p> OU:  <%= games.ovUnd %></p>
+    <p> adjEdge: <%= ouResults.adjEdge %></p>
+    
   </div>
 </div>
 
 <div class="card" style="width:33%">
   <div class="container">
     <h4><b>Moneyline</b></h4>
+    <p> The edge equal to <%= mlResults.mlEdge %> </p>
     <p> The Favourite is <%= mlResults.favourite %> </p>
     <p> Team 1 line Probabillity <%= mlResults. team1ImpPer %></p>
-    <p> Win Per <%= mlResults.lookAtWinPer %></p>
-    <p> Score Differential <%= mlResults.lookAtNetScore %></p>
-    <p> Efficiency Differential <%= mlResults.lookAtNetEff %></p>
+    <p> Win Per: <%= mlResults.lookAtWinPer %></p>
+    <p> Score Differential: <%= mlResults.lookAtNetScore %></p>
+    <p> Efficiency Differential: <%= mlResults.lookAtNetEff %></p>
     
   </div>
 
@@ -58,13 +59,13 @@
 
 <div class="card" style="width:33%">
   <div class="container">
-    <h4><b>Points Spread</b></h4>
+    <h3><b>Points Spread</b></h3>
     <p><b> Take  <%= sprdResults.sprdBet %> with the line.</b></p>
     <p> Expected Differential <%= sprdResults.t1expNetScore %></p>
-    <p>PtS Spread <%= sprdResults.team1ptsSprd %> </p>
+    <p>Pts Spread: <%= sprdResults.team1ptsSprd %> </p>
     <p> Total Discrepancy is  <%= sprdResults.team1ptsSprd - sprdResults.t1expNetScore %> </p>
-    <p> Team 1 per <%= sprdResults.team1sprdPer %></p>
-    <p> Team 2 per <%= sprdResults.team2sprdPer %></p>
+    <p> Team 1 per: <%= sprdResults.team1sprdPer %></p>
+    <p> Team 2 per: <%= sprdResults.team2sprdPer %></p>
     
   </div>
 
@@ -76,8 +77,6 @@
 
 
 <div class = "row">
-  <h1> <% nextPage = games.id + 1 %> </h1>
-    <% prevPage = games.gameID -1 %>
   <a class="btn btn-sm btn-success" href="/games/bets/<%= games.id - 1 %>"> Previous Game</a>    
   <a class="btn btn-sm btn-success" href="/games/bets/<%= games.id + 1 %>"  > Next Game</a> 
 

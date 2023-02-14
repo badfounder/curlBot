@@ -200,8 +200,8 @@ app.put("/games/edit/api/:ccUUID", (req, res) => {
     }
     res.redirect("/games");
   });
-  console.log(req.params.ccUUID)
-  console.log(req.body)
+  // console.log(req.params.ccUUID)
+  // console.log(req.body)
 });
 
 
@@ -254,7 +254,7 @@ function findTeam1(req, res, next) {
           /* Add selected data to previous saved data. */
           req.team1 = rows;
           // console.log(req.team1)
-          next();
+          return next();
       });
   }
 
@@ -264,7 +264,7 @@ function findTeam1(req, res, next) {
             /* Add selected data to previous saved data. */
             req.team2 = rows;
             // console.log(req.team2)
-            next();
+            return next();
         });
     }
 
@@ -308,8 +308,17 @@ function findTeam1(req, res, next) {
   scoreHedge,
 
     }
+  const sql = "INSERT OR IGNORE INTO OuBets (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,draw,ccUUID,gender,ccIDteam1,ccIDteam2,ouBet,betAmount,adjEdge,scoreHedge,expScore) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+  const thing = [req.games.gameID, req.games.tournament, req.games.date, req.games.team1, req.games.team2, req.games.ovUnd,req.games.ovUndLine,req.games.draw,req.games.ccUUID,req.games.gender,req.games.ccIDteam1,req.games.ccIDteam2,req.ouResults.ouBet,
+  req.ouResults.betAmount,req.ouResults.adjEdge,req.ouResults.scoreHedge,req.ouResults.expScore];
+   db.run(sql,thing, err => {
+     if (err) {
+       return console.error(err.message);
+     }
+    })
 
-      next()
+     next()
+    
     }
 
     function moneyLineEval(req, res, next){
@@ -398,7 +407,7 @@ next()
 };
 
   
-  function renderBetsPage(req, res) {
+function renderBetsPage(req, res) {
   res.render("bets", { games: req.games, t1: req.team1, t2: req.team2, ouResults: req.ouResults, mlResults: req.mlResults, sprdResults: req.sprdResults   
   });
 }
