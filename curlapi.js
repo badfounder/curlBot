@@ -95,3 +95,5 @@ getGames().then(games => {
 	updateTeamNames(game.id)
 });
 
+
+
