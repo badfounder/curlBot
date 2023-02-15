@@ -1,0 +1,72 @@
+<%- include("_header") -%>
+
+<h1>List of Games (<%= model.length %>)</h1>
+
+<div class="table-responsive-sm">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Game ID</th>
+        <th>Tournament</th>
+        <th>Date</th>
+        <th>team1</th>
+        <th>team2</th>
+        <th>ovUnd</th>
+        <th>ovUndLine</th>
+        <th>T1 Moneyline</th>
+        <th>T2 Moneyline</th>
+        <th>T1 Spreadln</th>
+        <th>T2 Spreadln</th>
+        <th>Spread</th>
+        <th class="d-print-none">
+          <a class="btn btn-sm btn-success" href="/games/create">AddGame</a>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (const bet of model) { %>
+        <tr>
+          <td><%= bet.id %></td>
+          <td><%= bet.gameID %></td>
+          <td><%= bet.ouBet%></td>
+          <td><%= bet.betAmount %></td>
+          <!-- <td><%= game.team2 %></td>
+          <td><%= game.ovUnd %></td>
+          <td><%= game.ovUndLine %></td>
+          <td><%= game.team1StraightOdds %></td>
+          <td><%= game.team2StraightOdds %></td>
+          <td><%= game.team1SpreadOdds %></td>
+          <td><%= game.team2SpreadOdds %></td>
+          <td><%= game.ptsSprd %></td> -->
+      
+      
+          <td class="d-print-none">
+            <a class="btn btn-sm btn-warning" href="/games/edit/<%= game.id %>">Edit</a>
+            <a class="btn btn-sm btn-danger" href="/games/delete/<%= game.id %>">Delete</a>
+            <a class="btn btn-sm btn-success" href="/games/bets/<%= game.id %>">Bet</a>
+          </td>
+         
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include("_footer") -%>
+
+"id" INTEGER PRIMARY KEY,
+"gameID" VARCHAR UNIQUE NOT NULL, 
+"date" TEXT, 
+"team1" TEXT,
+"ccIDteam1" TEXT,
+"ccIDteam2" TEXT, 
+"team2" TEXT, 
+"ovUnd" REAL, 
+"ovUndLine" REAL, 
+"undLine" REAL,
+"expScore" REAL, 
+"ouBet" TEXT NOT NULL,
+"betAmount" REAL NOT NULL,
+"adjEdge" REAL,
+"scoreHedge" REAL,
+"ccUUID" TEXT

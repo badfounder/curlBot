@@ -1,7 +1,7 @@
-var db = require('./db_config.js')
+var db = require("./db_config.js");
 
-const createTeamsTable = ()=> {
-    const sql_create = `CREATE TABLE IF NOT EXISTS teams ( 
+const createTeamsTable = () => {
+  const sql_create = `CREATE TABLE IF NOT EXISTS teams ( 
       "id" INTEGER PRIMARY KEY,
       "teamID" VARCHAR UNIQUE, 
       "win" REAL, 
@@ -16,34 +16,32 @@ const createTeamsTable = ()=> {
       "stlDef" REAL,
       "netEff" REAL as (ROUND("hamEff" - "stlDef",2)) 
     );`;
-    
-    db.run(sql_create, err => {
+
+  db.run(sql_create, (err) => {
     if (err) {
       return console.error(err.message);
     }
     console.log("Creation of Table 'teams'");
-    
-    });
-    
-     // Seed Data in The Table.
-     const sql_insert = `INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef) VALUES
+  });
+
+  // Seed Data in The Table.
+  const sql_insert = `INSERT OR IGNORE INTO teams (teamID,win,lose,ptsFor,ptsAgainst,hamEff,stlDef) VALUES
      ("Edin",61,13,8.55,5.42,0.48,0.15),
      ("Gim",54,20,8.83,5.72,0.51,0.14),
      ("Constantini",34,20,8.08,5.99,0.4,0.25)
      ;`;
-     db.run(sql_insert, err => {
-       if (err) {
-         return console.error(err.message);
-       }
-       console.log("Seeded Data into Teams Table");
-     });
-    
+  db.run(sql_insert, (err) => {
+    if (err) {
+      return console.error(err.message);
     }
-    
-    //Create a second table for the games.
-     
-    const createGamesTable = ()=> {
-    const sql_create2 = `
+    console.log("Seeded Data into Teams Table");
+  });
+};
+
+//Create a second table for the games.
+
+const createGamesTable = () => {
+  const sql_create2 = `
     CREATE TABLE IF NOT EXISTS games ( 
       "id" INTEGER PRIMARY KEY,
       "gameID" VARCHAR UNIQUE, 
@@ -63,36 +61,39 @@ const createTeamsTable = ()=> {
       "team2SpreadOdds" REAL,
       "ptsSprd" REAL,
       "ccUUID" TEXT,
-      "gender" TEXT
+      "gender" TEXT,
+      "team1score" REAL,
+      "team2score" REAL,
+      "team1result" REAL,
+      "team2result" REAL,
+      "totalscore" REAL as ("team1score" +"team2score")
+
     )`;
-    
-    db.run(sql_create2, err => {
+
+  db.run(sql_create2, (err) => {
     if (err) {
       return console.error(err.message);
     }
     console.log("Creation of Table 'games'");
-    })
-    
-    
-    
-    // feed the games table
-    const sql_insert = `INSERT OR IGNORE INTO games (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,team1StraightOdds,team2StraightOdds,team1SpreadOdds,team2SpreadOdds,ptsSprd) VALUES
+  });
+
+  // feed the games table
+  const sql_insert = `INSERT OR IGNORE INTO games (gameID,tournament,date,team1,team2,ovUnd,ovUndLine,team1StraightOdds,team2StraightOdds,team1SpreadOdds,team2SpreadOdds,ptsSprd) VALUES
     ("game1","CADOPEN23","10/01/2023","Gim","Constantini","10.5","1.72","1.3","3.2","1.65","2.1","-1.5")
-    ;`
-    
-    db.run(sql_insert, err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log("Seeded Data into Games Table");
-    });
+    ;`;
+
+  db.run(sql_insert, (err) => {
+    if (err) {
+      return console.error(err.message);
     }
-    
-    
-    //Create a Moneyline Bets Tavle
-     
-    const createOUBetsTable = ()=> {
-      const sql_create = `
+    console.log("Seeded Data into Games Table");
+  });
+};
+
+//Create a Moneyline Bets Tavle
+
+const createOUBetsTable = () => {
+  const sql_create = `
       CREATE TABLE IF NOT EXISTS OuBets ( 
         "id" INTEGER PRIMARY KEY,
         "gameID" VARCHAR UNIQUE NOT NULL, 
@@ -111,17 +112,17 @@ const createTeamsTable = ()=> {
         "scoreHedge" REAL,
         "ccUUID" TEXT
       )`;
-      
-      db.run(sql_create, err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log("Creation of Table 'OUBets'");
-      })
-    }
 
-    const createMLBetsTable = ()=> {
-      const sql_create = `
+  db.run(sql_create, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log("Creation of Table 'OUBets'");
+  });
+};
+
+const createMLBetsTable = () => {
+  const sql_create = `
       CREATE TABLE IF NOT EXISTS MLBets ( 
         "id" INTEGER PRIMARY KEY,
         "gameID" VARCHAR UNIQUE NOT NULL, 
@@ -139,19 +140,18 @@ const createTeamsTable = ()=> {
         "mlEdge" REAL,
         "mlBet" TEXT NOT NULL 
       )`;
-      
-      db.run(sql_create, err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log("Creation of Table 'MLBets'");
-      })
+
+  db.run(sql_create, (err) => {
+    if (err) {
+      return console.error(err.message);
     }
-    
-   
+    console.log("Creation of Table 'MLBets'");
+  });
+};
+
 //Create Points Spread Table.
-    const createPSBetsTable = ()=> {
-      const sql_create = `
+const createPSBetsTable = () => {
+  const sql_create = `
       CREATE TABLE IF NOT EXISTS PSBets ( 
         "id" INTEGER PRIMARY KEY,
         "gameID" VARCHAR UNIQUE NOT NULL, 
@@ -169,13 +169,19 @@ const createTeamsTable = ()=> {
         "sprdBet" TEXT NOT NULL,
         "sprdBetAmt" REAL NOT NULL 
       )`;
-      
-      db.run(sql_create, err => {
-      if (err) {
-        return console.error(err.message);
-      }
-      console.log("Creation of Table 'PSBets'");
-      })
-    }
 
-    module.exports = { createGamesTable , createTeamsTable, createOUBetsTable, createMLBetsTable, createPSBetsTable  }
+  db.run(sql_create, (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log("Creation of Table 'PSBets'");
+  });
+};
+
+module.exports = {
+  createGamesTable,
+  createTeamsTable,
+  createOUBetsTable,
+  createMLBetsTable,
+  createPSBetsTable,
+};
