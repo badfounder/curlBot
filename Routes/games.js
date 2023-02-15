@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router()
-var db = require('./data/db_config.js')
+var db = require('../data/db_config.js')
+var cors = require('cors')
 
 // GET /games
-  router.get("/games", (req, res) => {
+  router.get("/", (req, res) => {
     const sql = "SELECT * FROM games ORDER BY draw";
     db.all(sql, [], (err, rows) => {
       if (err) {
@@ -54,6 +55,31 @@ router.get("/create", (req, res) => {
     });
   });
   
+// GET /delete/5
+router.get("/delete/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "SELECT * FROM games WHERE (id = ?)";
+  db.get(sql, id, (err, row) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.render("deletegames", { model: row });
+  });
+});
+
+// POST /delete/5
+router.post("/delete/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = "DELETE FROM games WHERE (id = ?)";
+  db.run(sql, id, err => {
+    if (err) {
+      return console.error(err.message);
+    }
+    res.redirect("/games");
+    console.log(id)
+  });
+});
+
   //test out a put 
   
   router.put("/edit/api/:ccUUID", (req, res) => {
@@ -277,5 +303,8 @@ function getGames(req, res, next) {
   
   
   router.get('/bets/:id', getGames, findTeam1, findTeam2, overUnder, moneyLineEval, spreadEval, renderBetsPage);
+
+
+
 
   module.exports = router;
