@@ -95,7 +95,7 @@ const createTeamsTable = ()=> {
       const sql_create = `
       CREATE TABLE IF NOT EXISTS OuBets ( 
         "id" INTEGER PRIMARY KEY,
-        "gameID" VARCHAR UNIQUE, 
+        "gameID" VARCHAR UNIQUE NOT NULL, 
         "date" TEXT, 
         "team1" TEXT,
         "ccIDteam1" TEXT,
@@ -105,8 +105,8 @@ const createTeamsTable = ()=> {
         "ovUndLine" REAL, 
         "undLine" REAL,
         "expScore" REAL, 
-        "ouBet" TEXT,
-        "betAmount" REAL,
+        "ouBet" TEXT NOT NULL,
+        "betAmount" REAL NOT NULL,
         "adjEdge" REAL,
         "scoreHedge" REAL,
         "ccUUID" TEXT
@@ -124,7 +124,7 @@ const createTeamsTable = ()=> {
       const sql_create = `
       CREATE TABLE IF NOT EXISTS MLBets ( 
         "id" INTEGER PRIMARY KEY,
-        "gameID" VARCHAR UNIQUE, 
+        "gameID" VARCHAR UNIQUE NOT NULL, 
         "team1" TEXT,
         "ccIDteam1" TEXT,
         "ccIDteam2" TEXT, 
@@ -134,10 +134,10 @@ const createTeamsTable = ()=> {
         "lookAtNetScore" REAL, 
         "lookAtNetEff" REAL,
         "team1ImpPer" REAL, 
-        "mlBetAmt" REAL,
+        "mlBetAmt" REAL NOT NULL,
         "estWinProb" REAL,
         "mlEdge" REAL,
-        "mlBet" TEXT 
+        "mlBet" TEXT NOT NULL 
       )`;
       
       db.run(sql_create, err => {
@@ -154,7 +154,7 @@ const createTeamsTable = ()=> {
       const sql_create = `
       CREATE TABLE IF NOT EXISTS PSBets ( 
         "id" INTEGER PRIMARY KEY,
-        "gameID" VARCHAR UNIQUE, 
+        "gameID" VARCHAR UNIQUE NOT NULL, 
         "team1" TEXT,
         "ccIDteam1" TEXT,
         "ccIDteam2" TEXT, 
@@ -166,8 +166,8 @@ const createTeamsTable = ()=> {
         "team2ptsSprd" REAL, 
         "team2sprdPer" REAL,
         "team1sprdPer" REAL,
-        "sprdBet" TEXT,
-        "sprdBetAmt" REAL 
+        "sprdBet" TEXT NOT NULL,
+        "sprdBetAmt" REAL NOT NULL 
       )`;
       
       db.run(sql_create, err => {
