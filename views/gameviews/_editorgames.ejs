@@ -32,21 +32,7 @@
   </div>
 </div>
 
-
-<div class="form-group row">
-  <label class="col-form-label col-sm-2" for="ovUnd">O/U</label>
-  <div class="col-sm-7">
-    <input class="form-control" type="number" name="ovUnd"  step="0.01" value="<%= model.ovUnd %>" />
-  </div>
-</div>
-
-<div class="form-group row">
-  <label class="col-form-label col-sm-2" for="ovUndLine">O/U line</label>
-  <div class="col-sm-7">
-    <input class="form-control" name="ovUndLine" type="number" step="0.01" value="<%= model.ovUndLine %>" />
-  </div>
-</div>
-
+<div>-------</div>
 <div class="form-group row">
   <label class="col-form-label col-sm-2" for="team1StraightOdds">Team 1 team1StraightOdds</label>
   <div class="col-sm-7">
@@ -61,8 +47,18 @@
   </div>
 </div>
 
+<div>-------</div>
+
 <div class="form-group row">
-  <label class="col-form-label col-sm-2" for="team1StraightOdds">Team 1 Spread</label>
+  <label class="col-form-label col-sm-2" for="spread">Spread</label>
+  <div class="col-sm-7">
+    <input class="form-control" name="ptsSprd" type="number"  step="0.01" value="<%= model.ptsSprd %>" />
+  </div>
+</div>
+
+
+<div class="form-group row">
+  <label class="col-form-label col-sm-2" for="team1SpreadOdds">Team 1 Spread</label>
   <div class="col-sm-7">
     <input class="form-control" name="team1SpreadOdds" type="number"  step="0.01" value="<%= model.team1SpreadOdds %>" />
   </div>
@@ -75,13 +71,22 @@
   </div>
 </div>
 
+
+
+<div>-------</div>
+
 <div class="form-group row">
-  <label class="col-form-label col-sm-2" for="spread">Spread</label>
+  <label class="col-form-label col-sm-2" for="ovUnd">O/U</label>
   <div class="col-sm-7">
-    <input class="form-control" name="ptsSprd" type="number"  step="0.01" value="<%= model.ptsSprd %>" />
+    <input class="form-control" type="number" name="ovUnd"  step="0.01" value="<%= model.ovUnd %>" />
   </div>
 </div>
 
-
+<div class="form-group row">
+  <label class="col-form-label col-sm-2" for="ovUndLine">O/U line</label>
+  <div class="col-sm-7">
+    <input class="form-control" name="ovUndLine" type="number" step="0.01" value="<%= model.ovUndLine %>" />
+  </div>
+</div>
 
 

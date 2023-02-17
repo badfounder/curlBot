@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 var db = require("../data/db_config.js");
 var cors = require("cors");
-bankRoll = 1000;
+bankRoll = 200;
 
 // GET /games
 router.get("/", (req, res) => {
@@ -189,7 +189,7 @@ function overUnder(req, res, next) {
   const team2Avg = (req.team2.ptsFor + req.team1.ptsAgainst) / 2;
   const expScore = team1Avg + team2Avg;
 
-  const scoreHedge = 0.2;
+  const scoreHedge = 0.4;
   let ouBet = "";
   let betAmt = "";
   let ouEdge =
@@ -283,7 +283,7 @@ function moneyLineEval(req, res, next) {
   }
 
   let estWinProb = getWinProb();
-  let mlEdge = Math.round((estWinProb - team1ImpPer) * 1000) / 1000;
+  let mlEdge = (0.33 * Math.round((estWinProb - team1ImpPer) * 1000)) / 1000;
 
   if (mlEdge > reqEdge) {
     mlBet = "Team1";
@@ -293,7 +293,7 @@ function moneyLineEval(req, res, next) {
     mlBet = "No Bet ;";
   }
 
-  let mlBetAmt = Math.round(mlEdge * bankRoll * 100) / 100;
+  let mlBetAmt = Math.abs(Math.round(mlEdge * bankRoll * 100) / 100);
 
   let favourite = favouriteFinder(req);
   // console.log(`${req.games.gameID} MoneyLine ${req.team1.teamId} : is ${favourite} , with, ${team1ImpPer}% ,chance to win.,  Net Win Per, ${lookAtWinPer} , Net Score, ${lookAtNetScore}, Net Efficiency, ${lookAtNetEff}`)

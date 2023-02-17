@@ -1,7 +1,11 @@
 <%- include("_header") -%>
 
+
+
+
 <div class="title">
-<h1>Bet on <%= games.gameID %> </h1>
+<h1>Bet on <%= games.gameID %>   </h1>
+<h3><i>Draw:</i> <%= games.draw %></h3>
 </div>
  
 <div class = "row">
@@ -25,9 +29,19 @@
     <p><i> Net Score: </i> <b> </b><%= t2.netScore %></b></p>
     <p> <i>Net Efficiency: </i> <b><%= t2.netEff %></b></p>
   </div>
-</div>
 
 </div> 
+
+<div class="card" style="width:33%">
+  <div class="container">
+    <h4><b>Score</b></h4>
+    <h6><i> Team 1: </i><b><%= games.team1score %></b></h6>
+    <p> <i> Team 2:</i><b> <%= games.team2score %></b></p>
+    <p><i> TotalScore: </i> <b> </b><%= games.team1score + games.team2score%></b></p>
+    <p> <i>Team1:</i> <b><%= games.team1Result %></b> <i>Team2:</i> <b><%= games.team2Result %></b></p>
+  </div>
+</div>
+</div>
 
 <div class = "row"> </div>
 
